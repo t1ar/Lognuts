@@ -50,11 +50,16 @@ void saveData();
 void loadData();
 
 // --- Helper Functions ---
+
+void cinClean() {
+    cin.clear();
+    cin.ignore(10000,'\n');
+}
+
 bool isValidInt(int &input) {
     if (cin.fail()) {
         cout << "Input tidak valid! Masukkan opsi angka." << endl;
-        cin.clear(); // Reset error state
-        cin.ignore(10000,'\n'); // Buang input yang salah
+        cinClean();
         return false;
     }
     return true;
@@ -63,8 +68,7 @@ bool isValidInt(int &input) {
 bool isValidChar(char &input) {
     if (cin.fail()) {
         cout << "Input tidak valid! Masukkan opsi huruf." << endl;
-        cin.clear(); // Reset error state
-        cin.ignore(10000,'\n'); // Buang input yang salah
+        cinClean();
         return false;
     }
     return true;
@@ -181,7 +185,7 @@ void AllShortService() {
         temp = temp->nextGlobal;
     }
     cout << "Tekan Enter untuk kembali...";
-    cin.clear(); cin.ignore(10000,'\n'); cin.get();
+    cin.get(); cinClean();
 }
 
 void NewService() {
@@ -221,7 +225,7 @@ void NewService() {
 void MechanicHistory() {
     int index;
     cout << "\nPilih Montir:\n(1)Suby (2)Farhan (3)Dimas (4)Aldo\nInput: ";
-    cin >> index;
+    cin >> index; if (!isValidInt(index)) return; // Validasi input
     if (index >= 1 && index <= 4) {
         string mechanics[] = {"Suby", "Farhan", "Dimas", "Aldo"};
         string target = mechanics[index - 1];
@@ -244,7 +248,7 @@ void MechanicHistory() {
         if (!found) cout << "Montir ini belum memiliki riwayat kerja." << endl;
     } else cout << "Pilihan tidak valid." << endl;
     cout << "\nTekan Enter untuk kembali...";
-    cin.clear(); cin.ignore(10000,'\n'); cin.get();
+    cin.get(); cinClean();
 }
 
 void ServiceMenu() {
@@ -280,7 +284,7 @@ void AllCustomerData() {
         cout << "-----------------------" << endl;
         temp = temp->next;
     }
-    cout << "\nTekan Enter..."; cin.get();
+    cout << "\nTekan Enter..."; cin.get(); cinClean();
 }
 
 void IndividualCustomerData() {
@@ -317,14 +321,13 @@ void IndividualCustomerData() {
         cout << "\n[N]ext, [P]revious, [E]xit" << endl;
         cout << "Pilihan: ";
         cin >> nav;
+        nav = char(toupper(nav));
         if (!isValidChar(nav)) continue; // Validasi input
-        cin.ignore(); // Bersihkan buffer agar tidak skip input berikutnya
-
-        if ((nav == 'N' || nav == 'n') && curr->next) curr = curr->next;
-        else if ((nav == 'P' || nav == 'p') && curr->prev) curr = curr->prev;
-        else if (nav != 'E' && nav != 'e') {
+        if (nav == 'N' && curr->next) curr = curr->next;
+        else if ((nav == 'P') && curr->prev) curr = curr->prev;
+        else if (nav != 'E') {
             cout << "[!] Pilihan tidak tersedia atau sudah di ujung data." << endl;
-            cout << "\nTekan Enter untuk kembali..."; cin.get();
+            cout << "\nTekan Enter untuk kembali..."; cin.get(); cinClean();
         }
     } while (nav != 'E' && nav != 'e');
 }

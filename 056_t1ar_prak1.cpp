@@ -256,7 +256,7 @@ void ServiceMenu() {
     do {
         cout << "\n====== Services ======\n1. Semua Servis\n2. Servis Baru\n3. Riwayat Montir\n0. Kembali\nPilihan: ";
         cin >> pil;
-        if (!isValidInt(pil)) continue; // Validasi input
+        if (!isValidInt(pil)) pil=4; // Validasi input
         switch (pil) {
             case 1: cin.ignore();AllShortService(); break;
             case 2: cin.ignore();NewService(); break;
@@ -335,7 +335,7 @@ void IndividualCustomerData() {
 void MainMenu() {
     int pil;
     do {
-        cout << "====== Lognuts ======\n" << endl;
+        cout << "\n====== Lognuts ======\n" << endl;
         cout << "Pilih opsi: " << endl;
         cout << "1. Servis" << endl;
         cout << "2. Semua Pelanggan" << endl;
@@ -343,11 +343,11 @@ void MainMenu() {
         cout << "0. Keluar\n" << endl;
         cout << "Pilihan: ";
         cin >> pil;
-        if (!isValidInt(pil)) continue; // Validasi input
+        if (!isValidInt(pil)) pil=5; // Validasi input
         switch (pil) {
-            case 1: cin.ignore(); ServiceMenu(); break;
-            case 2: cin.ignore(); AllCustomerData(); break;
-            case 3: cin.ignore(); IndividualCustomerData(); break;
+            case 1: ServiceMenu(); break;
+            case 2: AllCustomerData(); break;
+            case 3: IndividualCustomerData(); break;
             case 0: cout << "Bye!"; break;
             default: cout << "Pilihan salah!";
         }

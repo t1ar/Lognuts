@@ -50,6 +50,26 @@ void saveData();
 void loadData();
 
 // --- Helper Functions ---
+bool isValidInt(int &input) {
+    if (cin.fail()) {
+        cout << "Input tidak valid! Masukkan opsi angka." << endl;
+        cin.clear(); // Reset error state
+        cin.ignore(10000,'\n'); // Buang input yang salah
+        return false;
+    }
+    return true;
+}
+
+bool isValidChar(char &input) {
+    if (cin.fail()) {
+        cout << "Input tidak valid! Masukkan opsi huruf." << endl;
+        cin.clear(); // Reset error state
+        cin.ignore(10000,'\n'); // Buang input yang salah
+        return false;
+    }
+    return true;
+}
+
 void addCustomer(Customer* newCust) {
     if (customerHead == nullptr) {
         customerHead = customerTail = newCust;
@@ -231,11 +251,12 @@ void ServiceMenu() {
     int pil;
     do {
         cout << "\n====== Services ======\n1. Semua Servis\n2. Servis Baru\n3. Riwayat Montir\n0. Kembali\nPilihan: ";
-        cin >> pil; cin.ignore();
+        cin >> pil;
+        if (!isValidInt(pil)) continue; // Validasi input
         switch (pil) {
-            case 1: AllShortService(); break;
-            case 2: NewService(); break;
-            case 3: MechanicHistory(); break;
+            case 1: cin.ignore();AllShortService(); break;
+            case 2: cin.ignore();NewService(); break;
+            case 3: cin.ignore();MechanicHistory(); break;
             default: cout << "Pilihan Salah!";
         }
     } while (pil != 0);
@@ -296,6 +317,7 @@ void IndividualCustomerData() {
         cout << "\n[N]ext, [P]revious, [E]xit" << endl;
         cout << "Pilihan: ";
         cin >> nav;
+        if (!isValidChar(nav)) continue; // Validasi input
         cin.ignore(); // Bersihkan buffer agar tidak skip input berikutnya
 
         if ((nav == 'N' || nav == 'n') && curr->next) curr = curr->next;
@@ -317,7 +339,8 @@ void MainMenu() {
         cout << "3. Navigasi Pelanggan" << endl;
         cout << "0. Keluar\n" << endl;
         cout << "Pilihan: ";
-        cin >> pil; cin.ignore();
+        cin >> pil;
+        if (!isValidInt(pil)) continue; // Validasi input
         switch (pil) {
             case 1: cin.ignore(); ServiceMenu(); break;
             case 2: cin.ignore(); AllCustomerData(); break;

@@ -14,7 +14,7 @@ const string border = "|";
 struct Service;
 struct Customer {
     string name;
-    string age;
+    int age = 0;
     char gender{};
     string phone;
     string address;
@@ -58,7 +58,7 @@ void cinClean() {
 
 bool isValidInt(int &input) {
     if (cin.fail()) {
-        cout << "Input tidak valid! Masukkan opsi angka." << endl;
+        cout << "Input tidak valid! Input harus berupa angka." << endl;
         cinClean();
         return false;
     }
@@ -67,7 +67,7 @@ bool isValidInt(int &input) {
 
 bool isValidChar(char &input) {
     if (cin.fail()) {
-        cout << "Input tidak valid! Masukkan opsi huruf." << endl;
+        cout << "Input tidak valid! Input harus berupa huruf." << endl;
         cinClean();
         return false;
     }
@@ -143,7 +143,7 @@ void loadData() {
             size_t s4 = data.find(border, s3 + 1);
 
             c->name = data.substr(0, s1);
-            c->age = data.substr(s1 + 1, s2 - s1 - 1);
+            c->age = stoi(data.substr(s1 + 1, s2 - s1 - 1));
             c->gender = data[s2 + 1];
             c->phone = data.substr(s3 + 1, s4 - s3 - 1);
             c->address = data.substr(s4 + 1);
@@ -185,7 +185,7 @@ void AllShortService() {
         temp = temp->nextGlobal;
     }
     cout << "Tekan Enter untuk kembali...";
-    cin.get(); cinClean();
+    cin.get(); cinClean(); return;
 }
 
 void NewService() {
@@ -199,8 +199,23 @@ void NewService() {
         c->name = name;
         cout << "No Telp: "; getline(cin, c->phone);
         cout << "Alamat: "; getline(cin, c->address);
-        cout << "Umur: "; cin >> c->age;
-        cout << "Gender (L/P): "; cin >> c->gender;
+        while (c->age <= 0) {
+            cout << "Umur: "; cin >> c->age;
+            if (!isValidInt(c->age)) {
+                c->age = -1;
+            } else if (c->age <= 0) {
+                cout << "Input tidak valid! Umur harus lebih dari 0." << endl;
+            }
+        }
+        while (c->gender != 'L' && c->gender != 'P') {
+            cout << "Gender (L/P): "; cin >> c->gender;
+            c->gender = char(toupper(c->gender));
+            if (!isValidChar(c->gender)) {
+                continue;
+            } else if (c->gender != 'L' && c->gender != 'P') {
+                cout << "Input tidak valid! Masukkan 'L' untuk Laki-laki atau 'P' untuk Perempuan." << endl;
+            }
+        }
         cin.ignore();
         addCustomer(c);
         cout << "*Pelanggan baru terdaftar*" << endl;
@@ -252,15 +267,15 @@ void MechanicHistory() {
 }
 
 void ServiceMenu() {
-    int pil;
+    int pil = -1;
     do {
         cout << "\n====== Services ======\n1. Semua Servis\n2. Servis Baru\n3. Riwayat Montir\n0. Kembali\nPilihan: ";
         cin >> pil;
-        if (!isValidInt(pil)) pil=4; // Validasi input
+        if (!isValidInt(pil)) pil=-1; // Validasi input
         switch (pil) {
-            case 1: cin.ignore();AllShortService(); break;
-            case 2: cin.ignore();NewService(); break;
-            case 3: cin.ignore();MechanicHistory(); break;
+            case 1: AllShortService(); break;
+            case 2: NewService(); break;
+            case 3: MechanicHistory(); break;
             default: cout << "Pilihan Salah!";
         }
     } while (pil != 0);
@@ -284,7 +299,7 @@ void AllCustomerData() {
         cout << "-----------------------" << endl;
         temp = temp->next;
     }
-    cout << "\nTekan Enter..."; cin.get(); cinClean();
+    cout << "\nTekan Enter..."; cin.get(); cinClean(); return;
 }
 
 void IndividualCustomerData() {
@@ -297,8 +312,8 @@ void IndividualCustomerData() {
         cout << "Nomor Telepon: " << curr->phone << endl;
         cout << "Umur: " << curr->age << endl;
         cout << "Gender: ";
-        if (curr->gender == 'L' || curr->gender == 'l') cout << "Laki-laki" << endl;
-        else if (curr->gender == 'P' || curr->gender == 'p') cout << "Perempuan" << endl;
+        if (curr->gender == 'L') cout << "Laki-laki" << endl;
+        else if (curr->gender == 'P') cout << "Perempuan" << endl;
         else cout << "Tidak diketahui" << endl;
         cout << "Alamat: " << curr->address << endl;
         Service* s = curr->serviceHistory;
@@ -327,13 +342,13 @@ void IndividualCustomerData() {
         else if ((nav == 'P') && curr->prev) curr = curr->prev;
         else if (nav != 'E') {
             cout << "[!] Pilihan tidak tersedia atau sudah di ujung data." << endl;
-            cout << "\nTekan Enter untuk kembali..."; cin.get(); cinClean();
+            cout << "\nTekan Enter untuk kembali...";cinClean(); cin.get(); 
         }
     } while (nav != 'E' && nav != 'e');
 }
 
 void MainMenu() {
-    int pil;
+    int pil = -1;
     do {
         cout << "\n====== Lognuts ======\n" << endl;
         cout << "Pilih opsi: " << endl;
@@ -343,7 +358,7 @@ void MainMenu() {
         cout << "0. Keluar\n" << endl;
         cout << "Pilihan: ";
         cin >> pil;
-        if (!isValidInt(pil)) pil=5; // Validasi input
+        if (!isValidInt(pil)) pil=-1; // Validasi input
         switch (pil) {
             case 1: ServiceMenu(); break;
             case 2: AllCustomerData(); break;

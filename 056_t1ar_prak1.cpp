@@ -156,7 +156,7 @@ void AllShortService() {
         temp = temp->nextGlobal;
     }
     cout << "Tekan Enter untuk kembali...";
-    cin.get();
+    cin.clear(); cin.ignore(10000,'\n'); cin.get();
 }
 
 void NewService() {
@@ -219,7 +219,7 @@ void MechanicHistory() {
         if (!found) cout << "Montir ini belum memiliki riwayat kerja." << endl;
     } else cout << "Pilihan tidak valid." << endl;
     cout << "\nTekan Enter untuk kembali...";
-    cin.ignore(); cin.get();
+    cin.clear(); cin.ignore(10000,'\n'); cin.get();
 }
 
 void ServiceMenu() {
@@ -313,6 +313,7 @@ void MainMenu() {
         cout << "0. Keluar\n" << endl;
         cout << "Pilihan: ";
         cin >> pil;
+        if (cin.)
         switch (pil) {
             case 1: cin.ignore(); ServiceMenu(); break;
             case 2: cin.ignore(); AllCustomerData(); break;

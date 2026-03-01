@@ -2,6 +2,11 @@
 #include <fstream>
 #include <string>
 
+//for cmake,just for the db in root folder
+#ifndef DB_PATH
+    #define DB_PATH "Lognuts_DB.dat"
+#endif
+
 using namespace std;
 const string border = "|";
 

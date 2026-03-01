@@ -312,8 +312,7 @@ void MainMenu() {
         cout << "3. Navigasi Pelanggan" << endl;
         cout << "0. Keluar\n" << endl;
         cout << "Pilihan: ";
-        cin >> pil;
-        if (cin.)
+        cin >> pil; cin.ignore();
         switch (pil) {
             case 1: cin.ignore(); ServiceMenu(); break;
             case 2: cin.ignore(); AllCustomerData(); break;

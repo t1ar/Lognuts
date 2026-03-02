@@ -11,7 +11,24 @@ using namespace std;
 const string border = "|";
 
 // --- Structs ---
+
+/**
+ * Struct untuk menyimpan data pelanggan
+ * Menggunakan doubly-linked list untuk navigasi maju dan mundur
+ */
 struct Service;
+/**
+ * Struct Customer - Menyimpan data pelanggan
+ * Terdiri dari:
+ *  - name: Nama pelanggan
+ *  - age: Umur pelanggan
+ *  - gender: Jenis kelamin (L=Laki-laki, P=Perempuan)
+ *  - phone: Nomor telepon pelanggan
+ *  - address: Alamat pelanggan
+ *  - serviceHistory: Pointer ke servis paling baru (untuk riwayat servis)
+ *  - next: Pointer ke pelanggan berikutnya (doubly-linked list)
+ *  - prev: Pointer ke pelanggan sebelumnya (doubly-linked list)
+ */
 struct Customer {
     string name;
     int age = 0;
@@ -23,6 +40,17 @@ struct Customer {
     Customer* prev = nullptr;
 };
 
+/**
+ * Struct Service - Menyimpan data servis yang dilakukan
+ * Terdiri dari:
+ *  - carModel: Model mobil yang diservis
+ *  - carBrand: Merek mobil yang diservis
+ *  - issueDesc: Deskripsi kendala/masalah mobil
+ *  - nameMechanic: Nama montir yang menangani servis
+ *  - customerData: Pointer ke data pelanggan yang melakukan servis
+ *  - nextGlobal: Pointer ke servis berikutnya (linked list global)
+ *  - nextInHistory: Pointer ke servis sebelumnya dalam riwayat (urutan terbalik)
+ */
 struct Service {
     string carModel;
     string carBrand;
@@ -34,8 +62,12 @@ struct Service {
 };
 
 // --- Global Variables ---
+
+/** Pointer ke pelanggan pertama dalam doubly-linked list */
 Customer* customerHead = nullptr;
+/** Pointer ke pelanggan terakhir dalam doubly-linked list */
 Customer* customerTail = nullptr;
+/** Pointer ke servis pertama dalam linked list global */
 Service* serviceHead = nullptr;
 
 // --- Function Declarations ---
@@ -51,11 +83,21 @@ void loadData();
 
 // --- Helper Functions ---
 
+/**
+ * Membersihkan input buffer setelah pembacaan input
+ * Menghapus karakter sisa di dalam buffer input stream
+ * Digunakan untuk menangani newline atau karakter lainnya yang tertinggal
+ */
 void cinClean() {
     cin.clear();
     cin.ignore(10000,'\n');
 }
 
+/**
+ * Validasi apakah input merupakan integer yang valid
+ * @param input - Referensi variabel integer yang akan divalidasi
+ * @return true jika input valid, false jika input gagal
+ */
 bool isValidInt(int &input) {
     if (cin.fail()) {
         cout << "Input tidak valid! Input harus berupa angka." << endl;
@@ -65,6 +107,11 @@ bool isValidInt(int &input) {
     return true;
 }
 
+/**
+ * Validasi apakah input merupakan karakter yang valid
+ * @param input - Referensi variabel karakter yang akan divalidasi
+ * @return true jika input valid, false jika input gagal
+ */
 bool isValidChar(char &input) {
     if (cin.fail()) {
         cout << "Input tidak valid! Input harus berupa huruf." << endl;
@@ -74,6 +121,11 @@ bool isValidChar(char &input) {
     return true;
 }
 
+/**
+ * Menambahkan pelanggan baru ke dalam linked list pelanggan
+ * Pelanggan ditambahkan di akhir list (tail)
+ * @param newCust - Pointer ke struct Customer yang akan ditambahkan
+ */
 void addCustomer(Customer* newCust) {
     if (customerHead == nullptr) {
         customerHead = customerTail = newCust;
@@ -84,6 +136,11 @@ void addCustomer(Customer* newCust) {
     }
 }
 
+/**
+ * Menambahkan servis baru ke dalam linked list servis global
+ * Servis ditambahkan di akhir list
+ * @param newServ - Pointer ke struct Service yang akan ditambahkan
+ */
 void addService(Service* newServ) {
     if (serviceHead == nullptr) {
         serviceHead = newServ;
@@ -94,6 +151,11 @@ void addService(Service* newServ) {
     }
 }
 
+/**
+ * Mencari pelanggan berdasarkan nama dalam linked list
+ * @param name - Nama pelanggan yang dicari (const reference ke string)
+ * @return Pointer ke struct Customer jika ditemukan, nullptr jika tidak ditemukan
+ */
 Customer* findCustomer(const string& name) {
     Customer* temp = customerHead;
     while (temp != nullptr) {
@@ -104,6 +166,13 @@ Customer* findCustomer(const string& name) {
 }
 
 // --- IO Data ---
+
+/**
+ * Menyimpan semua data pelanggan dan riwayat servis ke file
+ * Format file: C|nama|umur|gender|telp|alamat untuk pelanggan
+ *              S,brand|model|kendala|montir untuk servis
+ * File disimpan dengan nama 'Lognuts_DB.dat'
+ */
 void saveData() {
     ofstream file("Lognuts_DB.dat");
     Customer* current = customerHead;
@@ -125,6 +194,11 @@ void saveData() {
     file.close();
 }
 
+/**
+ * Memuat semua data pelanggan dan riwayat servis dari file
+ * Membaca file 'Lognuts_DB.dat' dan rekonstruksi struktur data linked list
+ * Jika file tidak ditemukan, fungsi akan return tanpa error
+ */
 void loadData() {
     ifstream file("Lognuts_DB.dat");
     if (!file.is_open()) return;
@@ -170,6 +244,12 @@ void loadData() {
 }
 
 // --- Menus ---
+
+/**
+ * Menampilkan daftar semua servis yang telah dilakukan
+ * Menampilkan informasi: merek mobil, model, kendala, montir, dan data pelanggan
+ * Jika tidak ada data, menampilkan pesan bahwa belum ada data servis
+ */
 void AllShortService() {
     cout << "\n====== All Services ======\n" << endl;
     Service* temp = serviceHead;
@@ -188,6 +268,12 @@ void AllShortService() {
     cin.get(); cinClean(); return;
 }
 
+/**
+ * Menu untuk menambahkan servis baru ke dalam sistem
+ * Meminta data pelanggan (jika pelanggan baru), kemudian data servis
+ * Jika pelanggan sudah ada, langsung menambahkan data servis
+ * Data disimpan otomatis ke file setelah berhasil ditambahkan
+ */
 void NewService() {
     cout << "\n====== New Service ======" << endl;
     string name;
@@ -237,6 +323,11 @@ void NewService() {
     cout << "\nServis berhasil disimpan!" << endl;
 }
 
+/**
+ * Menampilkan riwayat pekerjaan servis untuk montir tertentu
+ * Meminta user memilih montir (Suby, Farhan, Dimas, Aldo)
+ * Menampilkan semua servis yang telah dikerjakan oleh montir yang dipilih
+ */
 void MechanicHistory() {
     int index;
     cout << "\nPilih Montir:\n(1)Suby (2)Farhan (3)Dimas (4)Aldo\nInput: ";
@@ -266,6 +357,11 @@ void MechanicHistory() {
     cin.get(); cinClean();
 }
 
+/**
+ * Menu utama untuk bagian Servis
+ * Menyediakan opsi: Lihat semua servis, Tambah servis baru, Riwayat montir
+ * Loop sampai user memilih untuk kembali (pilihan 0)
+ */
 void ServiceMenu() {
     int pil = -1;
     do {
@@ -281,6 +377,11 @@ void ServiceMenu() {
     } while (pil != 0);
 }
 
+/**
+ * Menampilkan data lengkap untuk semua pelanggan dalam sistem
+ * Untuk setiap pelanggan, menampilkan: nama, telp, alamat, dan servis terakhir
+ * Jika tidak ada data pelanggan, menampilkan pesan data kosong
+ */
 void AllCustomerData() {
     Customer* temp = customerHead;
     cout << "====== All Customers ======" << endl;
@@ -302,6 +403,12 @@ void AllCustomerData() {
     cout << "\nTekan Enter..."; cin.get(); cinClean(); return;
 }
 
+/**
+ * Menu untuk navigasi dan melihat data pelanggan secara individual
+ * Menampilkan data detail pelanggan: nama, telp, umur, gender, alamat, dan 3 servis terakhir
+ * Memungkinkan navigasi dengan tombol N (Next), P (Previous), E (Exit)
+ * Jika tidak ada pelanggan, menampilkan pesan data kosong
+ */
 void IndividualCustomerData() {
     if (!customerHead) { cout << "Data kosong."; return; }
     Customer* curr = customerHead;
@@ -347,6 +454,12 @@ void IndividualCustomerData() {
     } while (nav != 'E' && nav != 'e');
 }
 
+/**
+ * Menu utama aplikasi Lognuts
+ * Menyediakan opsi: Servis, Semua Pelanggan, Navigasi Pelanggan, Keluar
+ * Loop sampai user memilih untuk keluar (pilihan 0)
+ * Menampilkan pesan "Bye!" saat keluar
+ */
 void MainMenu() {
     int pil = -1;
     do {
@@ -369,6 +482,12 @@ void MainMenu() {
     } while (pil != 0);
 }
 
+/**
+ * Fungsi utama program
+ * Memuat data dari file saat program dimulai
+ * Menampilkan menu utama untuk interaksi dengan pengguna
+ * @return 0 jika program berakhir normal
+ */
 int main() {
     loadData();
     MainMenu();

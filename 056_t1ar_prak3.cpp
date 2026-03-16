@@ -352,6 +352,39 @@ void CustomerQueueInfo(Customer* cust) {
 void BookingService(Customer* cust) {
     clearScreen();
     cout << "====== New Service ======\n";
+
+    // Jika dipanggil oleh admin, minta data customer
+    if (cust == nullptr) {
+        cout << "Masukkan nama pelanggan: >";
+        string custName;
+        getline(cin, custName);
+        cust = findCustomer(custName);
+        if (!cust) {
+            cout << "Pelanggan belum terdaftar.\n";
+            cout << "Masukkan Umur: >";
+            string ageStr; getline(cin, ageStr);
+            int age = 0;
+            try { age = stoi(ageStr); } catch(...) { age = 0; }
+            cout << "Masukkan Jenis Kelamin (L/P): >";
+            string genderStr; getline(cin, genderStr);
+            char gender = genderStr.empty() ? ' ' : genderStr[0];
+            cout << "Masukkan no telp: >";
+            string phone; getline(cin, phone);
+            cout << "Masukkan Alamat: >";
+            string address; getline(cin, address);
+
+            cust = new Customer();
+            cust->name = custName;
+            cust->age = age;
+            cust->gender = gender;
+            cust->phone = phone;
+            cust->address = address;
+            addCustomer(cust);
+            saveData();
+            cout << "*Pelanggan baru berhasil didaftarkan*\n";
+        }
+    }
+
     string model, brand, issue, date;
     cout << "Model Mobil: >"; getline(cin, model);
     cout << "Merek Mobil: >"; getline(cin, brand);
@@ -606,13 +639,13 @@ void AdminMenu() {
     do {
         clearScreen();
         cout << "====== Welcome to Lognuts (Admin) ======\nPilih menu!\n";
-        cout << "1. Selesaikan Servis\n2. Montir Baru\n3. Keluar\nPilihan: >";
+        cout << "1. Selesaikan Servis\n2. Montir Baru\n3. Servis Baru\n4. Keluar\nPilihan: >";
         cin >> pil; cinClean();
 
         if (pil == 1) { AdminCompleteJob(); }
         else if (pil == 2) { AddNewMechanic(); }
-
-    } while (pil != 3);
+        else if (pil == 3) { BookingService(nullptr); }
+    } while (pil != 4);
 }
 
 /**
@@ -646,9 +679,15 @@ void StartApp() {
     while(true) {
         clearScreen();
         cout << "====== Welcome To Garasi Suby ======\n";
+        cout << "Ketik 'quit' pada Nama untuk keluar dari aplikasi.\n";
         cout << "Masukkan nama & Nomor Telepon\n";
         string name, phone;
         cout << "Nama: "; getline(cin, name);
+
+        if (name == "quit" || name == "QUIT") {
+            cout << "Terima kasih telah menggunakan layanan kami!\n";
+            break;
+        }
 
         // Cek akses admin
         if (name == "adminacces8008") {
@@ -656,17 +695,40 @@ void StartApp() {
             continue;
         }
 
-        cout << "No Telp: >"; getline(cin, phone);
-
         Customer* cust = findCustomer(name);
-        // Jika pelanggan baru, buat data baru
+        // Jika pelanggan baru, minta data lengkap
         if (!cust) {
+            cout << "Anda pengguna baru, silakan lengkapi data diri Anda.\n";
+            cout << "No Telp: >"; getline(cin, phone);
+            cout << "Umur: >";
+            string ageStr; getline(cin, ageStr);
+            int age = 0;
+            try { age = stoi(ageStr); } catch(...) { age = 0; }
+            cout << "Jenis Kelamin (L/P): >";
+            string genderStr; getline(cin, genderStr);
+            char gender = genderStr.empty() ? ' ' : genderStr[0];
+            cout << "Alamat: >";
+            string address; getline(cin, address);
+
             cust = new Customer();
             cust->name = name;
             cust->phone = phone;
+            cust->age = age;
+            cust->gender = gender;
+            cust->address = address;
             addCustomer(cust);
             saveData();
+            cout << "*Akun berhasil dibuat*\n";
+        } else {
+            while (phone != cust->phone) {
+                cout << "No Telp: >"; getline(cin, phone);
+                if (phone != cust->phone) {
+                    cout << "Invalid!" << endl;
+                    StartApp();
+                }
+            }
         }
+
         CustomerMenu(cust);
     }
 }

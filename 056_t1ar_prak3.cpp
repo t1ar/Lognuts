@@ -686,7 +686,7 @@ void StartApp() {
 
         if (name == "quit" || name == "QUIT") {
             cout << "Terima kasih telah menggunakan layanan kami!\n";
-            break;
+            exit(0);
         }
 
         // Cek akses admin
